@@ -1,0 +1,36 @@
+---
+version: '3.3'
+services:
+  controller01:
+    container_name: controller01
+    hostname: controller01
+    build:
+      context: .
+    entrypoint: serf agent -node=controller01 -iface=eth0
+    expose:
+      - 7946
+      - 7373
+
+  controller02:
+    container_name: controller02
+    hostname: controller02
+    build:
+      context: .
+    entrypoint: serf agent -join=controller01:7946 -node=controller02 -iface=eth0
+    expose:
+      - 7946
+      - 7373
+    depends_on:
+      - controller01
+
+  controller03:
+    container_name: controller03
+    hostname: controller03
+    build:
+      context: .
+    entrypoint: serf agent -join=controller01:7946 -node=controller03 -iface=eth0
+    expose:
+      - 7946
+      - 7373
+    depends_on:
+      - controller01
